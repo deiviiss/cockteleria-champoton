@@ -8,12 +8,16 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
-import { CartItemPayload, OrderStatus } from "@/lib/types"
 import { getPhoneNumber } from "@/actions/get-phone-number"
+import { useSearchParams } from "next/navigation"
 
 export function SidebarCart() {
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+  const searchParams = useSearchParams()
+  const table = searchParams.get('table')
+  const tableNumber = Number(table)
+  const [showDeliveryModal, setShowDeliveryModal] = useState(false)
 
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
   const [showSafariModal, setShowSafariModal] = useState(false)
   const [pendingMessage, setPendingMessage] = useState<string | null>(null)
   const { isSideCartOpen, closeSideCart } = useUiStore()
@@ -24,15 +28,17 @@ export function SidebarCart() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         closeSideCart()
+        setShowDeliveryModal(false)
+        setShowSafariModal(false)
       }
     }
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [closeSideCart])
+  }, [closeSideCart, showDeliveryModal, showSafariModal])
 
-  const handleWhatsAppCheckout = async () => {
-    const phoneNumber = await getPhoneNumber() // Número de WhatsApp del negocio
+  const generateAndSendWhatsApp = async (option: "table" | "delivery") => {
+    const phoneNumber = await getPhoneNumber()
     let message = "🛒 *Nuevo Pedido*\n\n"
 
     cart.forEach((item) => {
@@ -40,7 +46,8 @@ export function SidebarCart() {
       message += `*${item.quantity}x* ${item.product.name} - $${price.toFixed(2)}\n`
     })
 
-    message += `\n*Total:* $${getSubtotal().toFixed(2)}\n\n`
+    message += `\n*Total:* $${getSubtotal().toFixed(2)}\n`
+    message += `*Tipo de pedido:* ${option === "table" ? `Mesa ${tableNumber}` : "Domicilio"}\n\n`
     message += "¡Gracias por tu pedido! Por favor, presiona el botón de enviar mensaje para continuar."
 
     const encodedMessage = encodeURIComponent(message)
@@ -52,6 +59,10 @@ export function SidebarCart() {
       setShowSafariModal(true)
       setPendingMessage(`https://wa.me/${phoneNumber}?text=${encodedMessage}`)
     }
+  }
+
+  const handleWhatsAppCheckout = () => {
+    setShowDeliveryModal(true)
   }
 
   const handleRemoveItem = (productId: string, productName: string) => {
@@ -194,14 +205,13 @@ export function SidebarCart() {
               <div className="space-y-2">
                 <Button onClick={handleWhatsAppCheckout} className="w-full bg-green-600 hover:bg-green-700">
                   <MessageCircle className="mr-2 h-4 w-4" />
-                  Pedir por WhatsApp
+                  Hacer pedido
                 </Button>
 
                 <Button
                   variant="outline"
                   onClick={handleClearCart}
-                  className="w-full text-destructive border-destructive bg-background hover:bg-destructive/10 hover:text-black dark:hover:text-destructive
-                  "
+                  className="w-full text-destructive border-destructive bg-background hover:bg-destructive/10 hover:text-black dark:hover:text-destructive"
                 >
                   Vaciar carrito
                 </Button>
@@ -231,7 +241,55 @@ export function SidebarCart() {
               >
                 Enviar por WhatsApp
               </Button>
-              <Button variant="outline" onClick={() => setShowSafariModal(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setShowSafariModal(false)}
+                className="w-full text-destructive border-destructive bg-background hover:bg-destructive/10 hover:text-black dark:hover:text-destructive"
+              >
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delivery Modal */}
+      {showDeliveryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-muted p-6 rounded-2xl shadow-xl max-w-sm w-full text-center space-y-4">
+            <h3 className="text-lg font-semibold">¿Cómo será tu pedido?</h3>
+            <p className="text-sm text-muted-foreground">Selecciona una opción para continuar</p>
+            <div className="flex flex-col gap-2">
+              {!tableNumber && (
+                <p className="text-xs text-muted-foreground">
+                  Escanea el código QR que se encuentra en tu mesa.
+                </p>
+              )}
+              <Button
+                disabled={!tableNumber}
+                onClick={() => {
+                  generateAndSendWhatsApp("table")
+                  setShowDeliveryModal(false)
+                }}
+                className="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {tableNumber ? `Consumir en mesa (Mesa ${tableNumber})` : "Consumir en mesa"}
+              </Button>
+
+              <Button
+                onClick={() => {
+                  generateAndSendWhatsApp("delivery")
+                  setShowDeliveryModal(false)
+                }}
+                className="bg-secondary hover:bg-secondary/90"
+              >
+                A domicilio
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowDeliveryModal(false)}
+                className="w-full text-destructive border-destructive bg-background hover:bg-destructive/10 hover:text-black dark:hover:text-destructive"
+              >
                 Cancelar
               </Button>
             </div>

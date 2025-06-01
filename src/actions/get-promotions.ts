@@ -10,7 +10,7 @@ const initialPromotions: Promotion[] = [
     discountPercentage: 15,
     originalPrice: 530, // 350 + 180
     promoPrice: 450,
-    image: "",
+    image: "https://res.cloudinary.com/dhyds3mnm/image/upload/v1748794461/paquete_de_oferta_ks1civ.jpg",
     isActive: true,
     startDate: new Date(),
     endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // +7 días
@@ -24,7 +24,7 @@ const initialPromotions: Promotion[] = [
     discountPercentage: 20,
     originalPrice: 230, // 170 + 60
     promoPrice: 185,
-    image: "",
+    image: "https://res.cloudinary.com/dhyds3mnm/image/upload/v1748794461/Chilaquiles_con_papa_mshtb4.jpg",
     isActive: true,
     startDate: new Date(),
     endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -38,7 +38,7 @@ const initialPromotions: Promotion[] = [
     discountPercentage: 25,
     originalPrice: 460, // 230 x 2
     promoPrice: 345,
-    image: '',
+    image: 'https://res.cloudinary.com/dhyds3mnm/image/upload/v1748794461/ensalada_doble_de_pulpo_lea084.jpg',
     isActive: true,
     startDate: new Date(),
     endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),

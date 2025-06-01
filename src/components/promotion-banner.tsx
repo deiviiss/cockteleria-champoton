@@ -84,8 +84,8 @@ export function PromotionBanner({ promotions }: PromotionBannerProps) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
                 <h3 className="font-bold text-xl text-white">{promotion.name}</h3>
                 <div className="flex items-center mt-1">
-                  <Tag className="h-4 w-4 text-secondary dark:text-primary mr-1" />
-                  <span className="text-secondary dark:text-primary font-semibold text-sm">
+                  <Tag className="h-4 w-4 text-white mr-1" />
+                  <span className="text-white font-semibold text-sm">
                     {discountPercentage}% DESCUENTO
                   </span>
                 </div>

@@ -23,7 +23,7 @@ export default async function Home() {
         <section className="bg-primary-gradient py-12">
           <div className="container mx-auto px-4">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Nuestro Menú</h1>
-            <p className="text-xl mb-6">Deliciosos productos a un solo clic de distancia</p>
+            <p className="text-xl mb-6">Del Negrito y el Wero, ¡Sabor familiar!</p>
           </div>
         </section>
 
