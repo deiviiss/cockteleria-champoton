@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { Facebook } from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa";
+import { motion } from "framer-motion"
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -33,7 +35,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="overflow-hidden">
             <h3 className="text-xl font-bold mb-4">Síguenos</h3>
             <div className="flex space-x-4">
               <Link
@@ -59,7 +61,20 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-700 mt-8 pt-6 pb-8 text-center text-gray-300">
+        <div className="border-t border-gray-700 mt-8 pt-6 pb-8 text-center text-gray-300 relative">
+          <div className="flex items-center gap-1"
+          >
+            <Link href="/" className="absolute right-0 -top-72 md:-top-48 md:-right-4 lg:right-10 text-xl font-bold text-primary">
+              <Image
+                src="/images/logo2.webp"
+                alt="logo-cockteleria-champoton"
+                width={120}
+                height={120}
+                className="object-contain"
+                priority
+              />
+            </Link>
+          </div>
           <p>© {new Date().getFullYear()} Cocktelería y Tacos de Mariscos Champotón. Todos los derechos reservados.</p>
         </div>
       </div>

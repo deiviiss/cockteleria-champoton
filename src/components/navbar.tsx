@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { ShoppingCart, List, Sandwich } from "lucide-react"
+import { ShoppingCart, List } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useUiStore, useCartStore } from "@/store"
 import { Badge } from "@/components/ui/badge"
@@ -27,8 +27,8 @@ export function Navbar() {
               <Image
                 src="/images/logo.webp"
                 alt="logo-cockteleria-champoton"
-                width={90}
-                height={90}
+                width={85}
+                height={85}
                 className="object-contain"
                 priority
               />
