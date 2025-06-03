@@ -2,28 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Base typography */
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Custom utility */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 
   .bg-primary-gradient {
-    background-image: linear-gradient(to right, hsl(var(--chart-1)), hsl(var(--chart-2)));
+    background-image: linear-gradient(to right, hsl(var(--chart-2)) 0%, hsl(var(--chart-2)) 40%, hsl(var(--chart-1)) 100%);
     color: white;
   }
 
   .dark .bg-primary-gradient {
-    background-image: linear-gradient(to right, hsl(var(--chart-1)), hsl(var(--chart-2)));
+    background-image: linear-gradient(to right, hsl(var(--chart-2)), hsl(var(--chart-1)));
     color: white;
   }
 }
 
+/* Base variables and themes */
 @layer base {
   :root {
+    /* General UI colors */
     --background: 36 100% 97%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -31,49 +35,46 @@ body {
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
 
-    --primary: 356 73% 42%;
-    /* #BE1D22 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 199 84% 30%;
-    /* #0A6A8E */
+    /* Primary (new blue) */
+    --primary: 200 63% 62%;
+    --primary-foreground: 0 0% 15%;
+
+    /* Secondary (new yellow) */
+    --secondary: 56 99% 50%;
     --secondary-foreground: 0 0% 15%;
 
+    /* Support colors */
     --muted: 36 100% 97%;
     --muted-foreground: 24 25% 45%;
-    --accent: 199 84% 30%;
-    /* #0A6A8E */
+    --accent: 173 58% 39%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 55%;
-    /* rojo fuerte */
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
+    /* Borders, inputs and rings */
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 356 73% 42%;
+    --ring: 56 99% 50%;
 
-    --chart-1: 356 73% 42%;
-    /* #BE1D22 */
-    --chart-2: 199 84% 30%;
-    /* #0A6A8E */
-    --chart-3: 272 42% 28%;
-    /* #392765 */
-    --chart-4: 40 55% 52%;
-    /* #C38F41 */
+    /* Chart colors */
+    --chart-1: 56 99% 50%;
+    --chart-2: 201 65% 62%;
+    --chart-3: 173 58% 39%;
+    --chart-4: 197 37% 24%;
     --chart-5: 340 75% 55%;
-    /* rojo/rosado */
 
+    /* Global radius */
     --radius: 0.5rem;
 
+    /* Custom sidebar */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 356 73% 42%;
-    /* #BE1D22 */
-    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-primary: 56 99% 50%;
+    --sidebar-primary-foreground: 0 0% 15%;
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 199 84% 30%;
-    /* azul como highlight */
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -84,10 +85,11 @@ body {
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 356 90% 55%;
+    --primary: 56 99% 60%;
     --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 201 65% 72%;
+    --secondary-foreground: 0 0% 9%;
+
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
     --accent: 0 0% 14.9%;
@@ -97,27 +99,22 @@ body {
 
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
-    --ring: 356 90% 55%;
+    --ring: 56 99% 60%;
 
-    --chart-1: 199 84% 30%;
-    /* #0A6A8E */
-    --chart-2: 272 42% 28%;
-    /* #392765 */
-    --chart-3: 40 55% 52%;
-    /* #C38F41 */
-    --chart-4: 356 73% 42%;
-    /* #BE1D22 */
+    --chart-1: 56 99% 60%;
+    --chart-2: 201 65% 62%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 272 42% 28%;
-    /* #392765 */
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: 56 99% 60%;
+    --sidebar-primary-foreground: 0 0% 9%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 199 84% 30%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
