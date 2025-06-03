@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+}
+
+model Category {
+  id         String      @id @default(uuid())
+  name       String
+  image      String?
+  products   Product[]
+  promotions Promotion[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  image       String
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model Promotion {
+  id                 String   @id @default(uuid())
+  name               String
+  description        String
+  discountPercentage Float
+  originalPrice      Float
+  promoPrice         Float
+  image              String
+  isActive           Boolean  @default(true)
+  startDate          DateTime
+  endDate            DateTime
+  category           Category @relation(fields: [categoryId], references: [id])
+  categoryId         String
+  createdAt          DateTime @default(now())
+}
+
+model User {
+  id          String   @id @default(uuid())
+  name        String
+  phoneNumber String   @unique
+  role        String   @default("admin")
+  createdAt   DateTime @default(now())
+}
+
+model PhoneNumberMenu {
+  id        String   @id @default(cuid())
+  label     String   @unique // 'demo', 'manual', etc.
+  number    String // the number in international format
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
