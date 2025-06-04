@@ -26,7 +26,7 @@ export function Navbar() {
             <Link href="/" className="text-xl font-bold text-primary">
               <Image
                 src="/images/logo.webp"
-                alt="logo-cockteleria-champoton"
+                alt="logo-cocteleria-champoton"
                 width={85}
                 height={85}
                 className="object-contain"

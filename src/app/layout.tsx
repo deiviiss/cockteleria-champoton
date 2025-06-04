@@ -12,7 +12,7 @@ import ScrollToTop from "@/components/scroll-to-top/ScrollToTop"
 const inter = Quicksand({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Cockteleria Champotón",
+  title: "Cocteleria Champotón",
   description: "Menú digital de cocteles y ensaladas de cocteles de camarón",
   keywords: [
     "menú digital",

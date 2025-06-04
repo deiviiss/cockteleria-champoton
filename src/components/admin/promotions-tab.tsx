@@ -6,10 +6,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import type { Promotion, Product } from "@/lib/types"
-import { savePromotion, deletePromotion, applyPromotion } from "@/lib/data"
 import { PlusCircle, Pencil, Trash2, Save, X, Calendar } from "lucide-react"
-import { getPromotions } from "@/actions/get-promotions"
-import { getProducts } from "@/actions/get-products"
+import { getPromotions } from "@/actions/promotions/get-promotions"
+import { getProducts } from "@/actions/products/get-products"
 import Loading from "@/app/loading"
 
 export default function PromotionsTab() {
@@ -78,11 +77,11 @@ export default function PromotionsTab() {
     }
 
     try {
-      await savePromotion(currentPromotion)
+      // await savePromotion(currentPromotion)
 
       // Aplicar la promoción a los productos
       if (currentPromotion.isActive) {
-        await applyPromotion(currentPromotion)
+        // await applyPromotion(currentPromotion)
       }
 
       // Actualizar la lista local
@@ -112,7 +111,7 @@ export default function PromotionsTab() {
     if (!confirm("¿Estás seguro de que deseas eliminar esta promoción?")) return
 
     try {
-      await deletePromotion(id)
+      // await deletePromotion(id)
       setPromotions(promotions.filter((p) => p.id !== id))
 
       // Recargar los productos para ver los cambios de precio

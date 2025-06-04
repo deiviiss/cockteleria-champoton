@@ -3,9 +3,9 @@ import Loading from "./loading"
 import { PromotionBanner } from "@/components/promotion-banner"
 import { ProductList } from "@/components/product-list"
 import { SidebarCategories } from "@/components/sidebar-categories"
-import { getProducts } from "@/actions/get-products"
-import { getCategories } from "@/actions/get-categories"
-import { getPromotions } from "@/actions/get-promotions"
+import { getProducts } from "@/actions/products/get-products"
+import { getCategories } from "@/actions/categories/get-categories"
+import { getPromotions } from "@/actions/promotions/get-promotions"
 
 export default async function Home() {
   const products = await getProducts()

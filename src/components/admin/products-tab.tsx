@@ -8,10 +8,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import type { Product, Category } from "@/lib/types"
-import { saveProduct, deleteProduct } from "@/lib/data"
 import { PlusCircle, Pencil, Trash2, Save, X } from "lucide-react"
-import { getProducts } from "@/actions/get-products"
-import { getCategories } from "@/actions/get-categories"
+import { getProducts } from "@/actions/products/get-products"
+import { getCategories } from "@/actions/categories/get-categories"
 import Loading from "@/app/loading"
 
 export default function ProductsTab() {
@@ -75,7 +74,7 @@ export default function ProductsTab() {
     }
 
     try {
-      await saveProduct(currentProduct)
+      // await saveProduct(currentProduct)
 
       // Update local list
       const updatedProducts = [...products]
@@ -100,7 +99,7 @@ export default function ProductsTab() {
     if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) return
 
     try {
-      await deleteProduct(id)
+      // await deleteProduct(id)
       setProducts(products.filter((p) => p.id !== id))
     } catch (error) {
       console.error("Error al eliminar el producto:", error)
@@ -182,7 +181,7 @@ export default function ProductsTab() {
           )}
         </>
       ) : (
-        <div>
+        <>
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">
               {currentProduct?.id === emptyProduct.id ? "Nuevo Producto" : "Editar Producto"}
@@ -279,7 +278,7 @@ export default function ProductsTab() {
               Guardar Producto
             </Button>
           </div>
-        </div>
+        </>
       )}
     </div>
   )

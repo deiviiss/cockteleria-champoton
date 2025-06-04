@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { Category } from "@/lib/types"
-import { saveCategory, deleteCategory } from "@/lib/data"
 import { PlusCircle, Pencil, Trash2, Save, X } from "lucide-react"
-import { getCategories } from "@/actions/get-categories"
+import { getCategories } from "@/actions/categories/get-categories"
 import Loading from "@/app/loading"
 
 export default function CategoriesTab() {
@@ -62,7 +61,7 @@ export default function CategoriesTab() {
     }
 
     try {
-      await saveCategory(currentCategory)
+      // await saveCategory(currentCategory)
 
       // Actualizar la lista local
       const updatedCategories = [...categories]
@@ -88,7 +87,7 @@ export default function CategoriesTab() {
       return
 
     try {
-      await deleteCategory(id)
+      // await deleteCategory(id)
       setCategories(categories.filter((c) => c.id !== id))
     } catch (error) {
       console.error("Error al eliminar la categoría:", error)

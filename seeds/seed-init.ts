@@ -1,4 +1,4 @@
-import { Category, Product, Promotion } from "@/lib/types";
+import { Category, Product, Promotion, User } from "@/lib/types";
 import { randomUUID } from "crypto";
 
 const initialCategories: Category[] = [
@@ -211,3 +211,14 @@ const initialProducts: Product[] = [
     createdAt: new Date(),
   },
 ];
+
+const initialUsers: User[] = [
+  {
+    id: randomUUID(),
+    name: "Juan Perez",
+    phoneNumber: "123456789",
+    role: "admin",
+    password: "123456",
+    createdAt: new Date(),
+  },
+]

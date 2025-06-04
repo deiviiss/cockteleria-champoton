@@ -53,11 +53,12 @@ model User {
   name        String
   phoneNumber String   @unique
   role        String   @default("admin")
+  password    String
   createdAt   DateTime @default(now())
 }
 
 model PhoneNumberMenu {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   label     String   @unique // 'demo', 'manual', etc.
   number    String // the number in international format
   isActive  Boolean  @default(false)

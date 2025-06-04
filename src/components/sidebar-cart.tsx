@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
-import { getPhoneNumber } from "@/actions/get-phone-number"
+import { getPhoneNumberMenu } from "@/actions/menu/get-phone-number-menu"
 import { useSearchParams } from "next/navigation"
 
 export function SidebarCart() {
@@ -38,7 +38,7 @@ export function SidebarCart() {
   }, [closeSideCart, showDeliveryModal, showSafariModal])
 
   const generateAndSendWhatsApp = async (option: "table" | "delivery") => {
-    const phoneNumber = await getPhoneNumber()
+    const phoneNumber = await getPhoneNumberMenu()
     let message = "🛒 *Nuevo Pedido*\n\n"
 
     cart.forEach((item) => {
