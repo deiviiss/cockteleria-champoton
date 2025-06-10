@@ -26,7 +26,8 @@ export const createUpdateCategory = async (formData: FormData) => {
       ? await prisma.category.update({ where: { id }, data: { name, image: image ?? undefined } })
       : await prisma.category.create({ data: { name, image: image ?? undefined } })
 
-    revalidatePath('/admin/categories')
+    revalidatePath('/admin')
+    revalidatePath('/')
 
     return { ok: true, message: id ? 'Categoría actualizada' : 'Categoría creada', category }
   } catch (error) {

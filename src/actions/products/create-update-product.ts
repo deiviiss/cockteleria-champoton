@@ -57,7 +57,8 @@ export const createUpdateProduct = async (formData: FormData) => {
         }
       })
 
-    revalidatePath('/admin/products')
+    revalidatePath('/admin')
+    revalidatePath('/')
 
     return { ok: true, message: id ? 'Producto actualizado' : 'Producto creado', product }
   } catch (error) {

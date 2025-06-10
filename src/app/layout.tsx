@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Inter, Pacifico, Quicksand } from "next/font/google"
+import { Quicksand } from "next/font/google"
 import { Navbar } from "@/components/navbar"
 import { SidebarCart } from "@/components/sidebar-cart"
 import { Footer } from "@/components/footer"
@@ -12,8 +12,8 @@ import ScrollToTop from "@/components/scroll-to-top/ScrollToTop"
 const inter = Quicksand({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Cocteleria Champotón",
-  description: "Menú digital de cocteles y ensaladas de cocteles de camarón",
+  title: "Coctelería Champotón",
+  description: "Menú digital de cócteles y ensaladas de camarón",
   keywords: [
     "menú digital",
     "menú interactivo",
@@ -21,11 +21,11 @@ export const metadata: Metadata = {
     "digital menu",
     "restaurant menu",
     "food delivery",
-    "cocteles",
+    "cócteles",
     "ensaladas",
-    "cocteles de camarón",
-    "cocteles de mariscos",
-    "cocteles de caldos",
+    "cócteles de camarón",
+    "cócteles de mariscos",
+    "cócteles de caldos",
     "pescado frito",
     "mariscos",
     "caldos",

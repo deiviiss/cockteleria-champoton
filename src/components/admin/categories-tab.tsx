@@ -15,11 +15,7 @@ import { createUpdateCategory } from "@/actions/categories/createUpdateCategory"
 import { toast } from "sonner"
 import { deleteCategory } from "@/actions/categories/delete-category-by-id"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
-
-const categorySchema = z.object({
-  name: z.string().min(3, { message: "El nombre debe tener al menos 3 caracteres" }).max(100),
-  image: z.string().url({ message: "La URL de la imagen no es válida" }).optional().nullable()
-})
+import { categorySchema } from "@/schemas/category.schema"
 
 export default function CategoriesTab() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -119,11 +115,10 @@ export default function CategoriesTab() {
     setIsEditing(false)
     setCurrentCategory(null)
 
-    // Opcional: actualizar la lista con los nuevos datos desde el server
+    // Optional: update the list with the new data from the server
     const updated = await getCategories()
     setCategories(updated)
   }
-
 
   if (isLoading) {
     return <Loading />
@@ -144,7 +139,7 @@ export default function CategoriesTab() {
           </div>
 
           {categories.length === 0 ? (
-            <div className="text-center py-8 text-muted">No hay categorías. ¡Agrega una nueva!</div>
+            <div className="text-center py-8 text-muted-foreground">No hay categorías. ¡Agrega una nueva!</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">

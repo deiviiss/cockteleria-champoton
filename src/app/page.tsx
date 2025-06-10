@@ -28,12 +28,15 @@ export default async function Home() {
         </section>
 
         {/* Featured Promotions */}
-        <section className="py-6 bg-muted">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6 text-center">Promociones Destacadas</h2>
-            <PromotionBanner promotions={promotions} />
-          </div>
-        </section>
+        {
+          promotions.length > 0 &&
+          <section className="py-6 bg-muted">
+            <div className="container mx-auto px-4">
+              <h2 className="text-2xl font-bold mb-6 text-center">Promociones Destacadas</h2>
+              <PromotionBanner promotions={promotions} />
+            </div>
+          </section>
+        }
 
         {
           products.length > 0 &&
