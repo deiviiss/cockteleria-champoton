@@ -5,7 +5,11 @@ import { Product } from "@/lib/types"
 
 export async function getProducts(): Promise<Product[]> {
   try {
-    const products: Product[] = await prisma.product.findMany()
+    const products: Product[] = await prisma.product.findMany({
+      include: {
+        options: true
+      }
+    })
 
     if (!products) return []
 

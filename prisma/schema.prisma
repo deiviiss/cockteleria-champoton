@@ -21,15 +21,26 @@ model Category {
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String          @id @default(uuid())
   name        String
   description String
   price       Float
   image       String
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category        @relation(fields: [categoryId], references: [id])
   categoryId  String
-  isAvailable Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  isAvailable Boolean         @default(true)
+  options     ProductOption[] // Relation 1:N
+  createdAt   DateTime        @default(now())
+}
+
+model ProductOption {
+  id          String  @id @default(uuid())
+  product     Product @relation(fields: [productId], references: [id])
+  productId   String
+  name        String // Ej: “Big”, “Strawberry”, etc.
+  price       Float // Specific price for this option
+  quantity    Int     @default(0) // Could be ignored
+  isAvailable Boolean @default(true)
 }
 
 model Promotion {
@@ -41,8 +52,6 @@ model Promotion {
   promoPrice         Float
   image              String
   isActive           Boolean  @default(true)
-  startDate          DateTime
-  endDate            DateTime
   category           Category @relation(fields: [categoryId], references: [id])
   categoryId         String
   createdAt          DateTime @default(now())
@@ -52,7 +61,7 @@ model User {
   id          String   @id @default(uuid())
   name        String
   phoneNumber String   @unique
-  role        String   @default("admin")
+  role        Role     @default(admin)
   password    String
   createdAt   DateTime @default(now())
 }

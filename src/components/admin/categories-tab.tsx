@@ -1,26 +1,51 @@
 "use client"
 
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import type { Category } from "@/lib/types"
 import { PlusCircle, Pencil, Trash2, Save, X } from "lucide-react"
 import { getCategories } from "@/actions/categories/get-categories"
 import Loading from "@/app/loading"
+import { createUpdateCategory } from "@/actions/categories/createUpdateCategory"
+import { toast } from "sonner"
+import { deleteCategory } from "@/actions/categories/delete-category-by-id"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
+
+const categorySchema = z.object({
+  name: z.string().min(3, { message: "El nombre debe tener al menos 3 caracteres" }).max(100),
+  image: z.string().url({ message: "La URL de la imagen no es válida" }).optional().nullable()
+})
 
 export default function CategoriesTab() {
   const [categories, setCategories] = useState<Category[]>([])
   const [isEditing, setIsEditing] = useState(false)
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null)
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null)
+
   const [isLoading, setIsLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const emptyCategory: Category = {
-    id: "",
-    name: "",
-    image: ""
-  }
+  const form = useForm<z.infer<typeof categorySchema>>({
+    resolver: zodResolver(categorySchema),
+    defaultValues: {
+      name: currentCategory?.name || ""
+    }
+  })
 
+  useEffect(() => {
+    if (currentCategory) {
+      form.reset({ name: currentCategory.name })
+    }
+  }, [currentCategory, form])
+
+  // Load data on mount
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -37,7 +62,8 @@ export default function CategoriesTab() {
   }, [])
 
   const handleAddNew = () => {
-    setCurrentCategory({ ...emptyCategory, id: Date.now().toString() })
+    setCurrentCategory(null)
+    form.reset({ name: "" }) // clear input field
     setIsEditing(true)
   }
 
@@ -51,49 +77,53 @@ export default function CategoriesTab() {
     setIsEditing(false)
   }
 
-  const handleSave = async () => {
-    if (!currentCategory) return
-
-    // Validación básica
-    if (!currentCategory.name) {
-      alert("Por favor ingresa un nombre para la categoría")
-      return
-    }
-
-    try {
-      // await saveCategory(currentCategory)
-
-      // Actualizar la lista local
-      const updatedCategories = [...categories]
-      const index = updatedCategories.findIndex((c) => c.id === currentCategory.id)
-
-      if (index >= 0) {
-        updatedCategories[index] = currentCategory
-      } else {
-        updatedCategories.push(currentCategory)
-      }
-
-      setCategories(updatedCategories)
-      setCurrentCategory(null)
-      setIsEditing(false)
-    } catch (error) {
-      console.error("Error al guardar la categoría:", error)
-      alert("Ocurrió un error al guardar la categoría")
-    }
-  }
-
   const handleDelete = async (id: string) => {
-    if (!confirm("¿Estás seguro de que deseas eliminar esta categoría? Esto podría afectar a los productos asociados."))
-      return
+    if (!categoryToDelete) return
 
-    try {
-      // await deleteCategory(id)
-      setCategories(categories.filter((c) => c.id !== id))
-    } catch (error) {
-      console.error("Error al eliminar la categoría:", error)
-      alert("Ocurrió un error al eliminar la categoría")
+    const { ok, message } = await deleteCategory(id)
+
+    if (!ok) {
+      toast.error(message || "No se pudo eliminar la categoría")
+      return
     }
+
+    toast.success(message || "Categoría eliminada correctamente")
+    const updated = await getCategories()
+    setCategories(updated)
+
+    setShowDeleteModal(false)
+    setCategoryToDelete(null)
   }
+
+  const onSubmit = async (values: z.infer<typeof categorySchema>) => {
+    setIsSubmitting(true)
+
+    const formData = new FormData()
+    formData.append("name", values.name)
+
+    // If we're editing an existing category
+    if (currentCategory?.id) {
+      formData.append("id", currentCategory.id)
+    }
+
+    const { ok, message } = await createUpdateCategory(formData)
+
+    if (!ok) {
+      toast.error(message || "No se pudo guardar la categoría")
+      setIsSubmitting(false)
+      return
+    }
+
+    toast.success(message || "Categoría guardada correctamente")
+    setIsSubmitting(false)
+    setIsEditing(false)
+    setCurrentCategory(null)
+
+    // Opcional: actualizar la lista con los nuevos datos desde el server
+    const updated = await getCategories()
+    setCategories(updated)
+  }
+
 
   if (isLoading) {
     return <Loading />
@@ -119,14 +149,14 @@ export default function CategoriesTab() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-muted">
+                  <tr className="bg-primary/20">
                     <th className="text-left p-3">Nombre</th>
                     <th className="text-right p-3">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {categories.map((category) => (
-                    <tr key={category.id} className="border-b hover:bg-muted">
+                    <tr key={category.id} className="border-b hover:bg-primary/10">
                       <td className="p-3">{category.name}</td>
                       <td className="p-3 text-right">
                         <Button
@@ -140,7 +170,10 @@ export default function CategoriesTab() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleDelete(category.id)}
+                          onClick={() => {
+                            setCategoryToDelete(category)
+                            setShowDeleteModal(true)
+                          }}
                           className="text-destructive hover:text-destructive/80"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -154,10 +187,10 @@ export default function CategoriesTab() {
           )}
         </>
       ) : (
-        <div>
+        <div className="pb-5">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">
-              {currentCategory?.id === emptyCategory.id ? "Nueva Categoría" : "Editar Categoría"}
+              {currentCategory ? "Editar Categoría" : "Nueva Categoría"}
             </h2>
             <Button variant="ghost" onClick={handleCancel}>
               <X className="h-4 w-4 mr-2" />
@@ -166,27 +199,71 @@ export default function CategoriesTab() {
           </div>
 
           <div className="max-w-md mx-auto">
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="name">Nombre de la Categoría *</Label>
-                <Input
-                  id="name"
-                  value={currentCategory?.name || ""}
-                  onChange={(e) => setCurrentCategory({ ...currentCategory!, name: e.target.value })}
-                  placeholder="Nombre de la categoría"
-                />
-              </div>
-            </div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nombre de la Categoría *</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Nombre de la categoría"
+                            {...field}
+                            disabled={isSubmitting}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-            <div className="mt-6 flex justify-end">
-              <Button onClick={handleSave} className="bg-primary hover:bg-primary/80">
-                <Save className="h-4 w-4 mr-2" />
-                Guardar Categoría
-              </Button>
-            </div>
+                <div className="mt-6 flex justify-end">
+                  <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/80">
+                    <Save className="h-4 w-4 mr-2" />
+                    Guardar Categoría
+                  </Button>
+                </div>
+              </form>
+            </Form>
           </div>
         </div>
       )}
+
+
+      {/* delete modal */}
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>¿Eliminar esta categoría?</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              Esta acción no se puede deshacer. Si cuenta con productos asociados, no se podrá eliminar.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="text-center my-4">
+            <p className="font-semibold text-lg">{categoryToDelete?.name}</p>
+          </div>
+
+          <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => handleDelete(categoryToDelete?.id || "")}
+            >
+              Eliminar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

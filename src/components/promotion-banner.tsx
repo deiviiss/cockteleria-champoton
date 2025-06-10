@@ -19,12 +19,9 @@ export function PromotionBanner({ promotions }: PromotionBannerProps) {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    // Filter active promotions within the date range
-    const now = new Date()
+    // Filter active promotions within the state
     const filtered = promotions.filter((promo) => {
-      const startDate = new Date(promo.startDate)
-      const endDate = new Date(promo.endDate)
-      return promo.isActive && startDate <= now && endDate >= now
+      return promo.isActive
     })
     setActivePromotions(filtered)
   }, [promotions])

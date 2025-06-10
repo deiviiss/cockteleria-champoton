@@ -1,9 +1,10 @@
 export interface ProductOption {
-  id: string;
+  id?: string;
   productId: string;
   name: string;
-  extraCost: number;
+  price: number;
   quantity: number;
+  isAvailable: boolean;
 }
 
 export interface Product {
@@ -33,8 +34,6 @@ export interface Promotion {
   promoPrice: number
   image: string
   isActive: boolean
-  startDate: Date
-  endDate: Date
   categoryId: string
   createdAt: Date
 }

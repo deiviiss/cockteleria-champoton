@@ -18,6 +18,6 @@ export const getPromotionById = async (id: string) => {
     return promotion
   } catch (error) {
     console.error('Error fetching promotion by ID:', error)
-    return null
+    return { ok: false, message: 'Error al obtener la promoción' }
   }
 }

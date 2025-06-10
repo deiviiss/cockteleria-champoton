@@ -1,25 +1,19 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
 import prisma from '@/lib/prisma'
-
-const promotionSchema = z.object({
-  id: z.string().uuid().optional(),
-  name: z.string().min(3).max(100),
-  description: z.string().min(3).max(200),
-  discountPercentage: z.coerce.number().min(0).max(100),
-  originalPrice: z.coerce.number().positive(),
-  promoPrice: z.coerce.number().positive(),
-  image: z.string().url(),
-  isActive: z.coerce.boolean().optional().default(true),
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime(),
-  categoryId: z.string().uuid()
-})
+import { promotionSchema } from '@/schemas/promotion.schema'
 
 export const createUpdatePromotion = async (formData: FormData) => {
-  const data = Object.fromEntries(formData)
+  const rawData = Object.fromEntries(formData)
+
+  const data = {
+    ...rawData,
+    discountPercentage: rawData.discountPercentage ? Number(rawData.discountPercentage) : 0,
+    promoPrice: rawData.promoPrice ? Number(rawData.promoPrice) : 0,
+    originalPrice: rawData.originalPrice ? Number(rawData.originalPrice) : 0,
+    isActive: rawData.isActive === 'true'
+  }
 
   const parsed = promotionSchema.safeParse(data)
 
@@ -36,8 +30,6 @@ export const createUpdatePromotion = async (formData: FormData) => {
     promoPrice,
     image,
     isActive,
-    startDate,
-    endDate,
     categoryId
   } = parsed.data
 
@@ -53,8 +45,6 @@ export const createUpdatePromotion = async (formData: FormData) => {
           promoPrice,
           image,
           isActive,
-          startDate: new Date(startDate),
-          endDate: new Date(endDate),
           categoryId
         }
       })
@@ -67,8 +57,6 @@ export const createUpdatePromotion = async (formData: FormData) => {
           promoPrice,
           image,
           isActive,
-          startDate: new Date(startDate),
-          endDate: new Date(endDate),
           categoryId
         }
       })
