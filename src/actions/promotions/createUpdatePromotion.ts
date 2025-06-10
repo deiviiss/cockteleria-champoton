@@ -61,7 +61,8 @@ export const createUpdatePromotion = async (formData: FormData) => {
         }
       })
 
-    revalidatePath('/admin/promotions')
+    revalidatePath('/admin')
+    revalidatePath('/')
 
     return { ok: true, message: id ? 'Promoción actualizada' : 'Promoción creada', promotion }
   } catch (error) {
