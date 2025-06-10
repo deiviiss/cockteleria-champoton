@@ -31,3 +31,4 @@ diff.txt
 
 # Postgres
 /postgres
+/src/generated/prisma

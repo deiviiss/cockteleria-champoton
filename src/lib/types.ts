@@ -1,9 +1,10 @@
 export interface ProductOption {
-  id: string;
+  id?: string;
   productId: string;
   name: string;
-  extraCost: number;
+  price: number;
   quantity: number;
+  isAvailable: boolean;
 }
 
 export interface Product {
@@ -33,36 +34,8 @@ export interface Promotion {
   promoPrice: number
   image: string
   isActive: boolean
-  startDate: Date
-  endDate: Date
   categoryId: string
   createdAt: Date
-}
-
-export type OrderStatus = 'PENDING' | 'IN_PROGRESS' | 'DELIVERED' | 'CANCELLED'
-
-export interface OrderItem {
-  id: string
-  orderId: string
-  quantity: number
-  unitPrice: number
-  productId?: string | null
-  product?: Product
-  promotionId?: string | null
-  promotion?: Promotion
-}
-
-export interface Order {
-  id: string
-  shortId: string
-  items: OrderItem[]
-  totalPrice: number
-  status: OrderStatus
-  address: string
-  comment?: string | null
-  createdAt: Date
-  userId?: string | null
-  User?: Partial<User> | null
 }
 
 export type CartItemPayload = {
@@ -76,6 +49,7 @@ export type User = {
   id: string
   name: string
   phoneNumber: string
+  role: string
+  password: string
   createdAt: Date
-  orders: Order[]
 }

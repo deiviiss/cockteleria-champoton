@@ -3,9 +3,9 @@ import Loading from "./loading"
 import { PromotionBanner } from "@/components/promotion-banner"
 import { ProductList } from "@/components/product-list"
 import { SidebarCategories } from "@/components/sidebar-categories"
-import { getProducts } from "@/actions/get-products"
-import { getCategories } from "@/actions/get-categories"
-import { getPromotions } from "@/actions/get-promotions"
+import { getProducts } from "@/actions/products/get-products"
+import { getCategories } from "@/actions/categories/get-categories"
+import { getPromotions } from "@/actions/promotions/get-promotions"
 
 export default async function Home() {
   const products = await getProducts()
@@ -35,23 +35,26 @@ export default async function Home() {
           </div>
         </section>
 
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Sidebar with categories */}
-            <div className="md:w-1/4">
-              <div className="sticky top-20 hidden md:block">
-                <SidebarCategories categories={categories} />
+        {
+          products.length > 0 &&
+          <div className="container mx-auto px-4 py-8">
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Sidebar with categories */}
+              <div className="md:w-1/4">
+                <div className="sticky top-20 hidden md:block">
+                  <SidebarCategories categories={categories} />
+                </div>
+              </div>
+
+              {/* Main content with products */}
+              <div className="md:w-3/4">
+                <Suspense fallback={<Loading />}>
+                  <ProductList products={products} categories={categories} />
+                </Suspense>
               </div>
             </div>
-
-            {/* Main content with products */}
-            <div className="md:w-3/4">
-              <Suspense fallback={<Loading />}>
-                <ProductList products={products} categories={categories} />
-              </Suspense>
-            </div>
           </div>
-        </div>
+        }
       </main>
     </>
   )

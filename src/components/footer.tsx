@@ -10,7 +10,7 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">Cocktelería y Tacos de Mariscos Champotón</h3>
+            <h3 className="text-xl font-bold mb-4">Coctelería y Tacos de Mariscos Champotón</h3>
             <p className="text-gray-300">Del Negrito y el Wero, ¡Sabor familiar!</p>
           </div>
 
@@ -30,6 +30,11 @@ export function Footer() {
               <li>
                 <Link href="/privacy" className="text-gray-300 hover:text-white transition-colors">
                   Política de Privacidad
+                </Link>
+              </li>
+              <li>
+                <Link href="/admin" className="text-gray-300 hover:text-white transition-colors">
+                  Administración
                 </Link>
               </li>
             </ul>
@@ -55,7 +60,7 @@ export function Footer() {
             </div>
             <div className="mt-4">
               <p className="text-gray-300">Contáctanos:</p>
-              <p className="text-gray-300">info@cockteleriachampoton.com</p>
+              <p className="text-gray-300">info@cocteleriachampoton.com</p>
               <p className="text-gray-300">981 125 0049</p>
             </div>
           </div>
@@ -67,7 +72,7 @@ export function Footer() {
             <Link href="/" className="absolute right-0 -top-72 md:-top-48 md:-right-4 lg:right-10 text-xl font-bold text-primary">
               <Image
                 src="/images/logo2.webp"
-                alt="logo-cockteleria-champoton"
+                alt="logo-cocteleria-champoton"
                 width={120}
                 height={120}
                 className="object-contain"
@@ -75,7 +80,7 @@ export function Footer() {
               />
             </Link>
           </div>
-          <p>© {new Date().getFullYear()} Cocktelería y Tacos de Mariscos Champotón. Todos los derechos reservados.</p>
+          <p>© {new Date().getFullYear()} Coctelería y Tacos de Mariscos Champotón. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>
