@@ -45,11 +45,16 @@ export type CartItemPayload = {
   unitPrice: number
 }
 
+export enum Role {
+  ADMIN = "admin",
+  USER = "user"
+}
+
 export type User = {
   id: string
   name: string
   phoneNumber: string
-  role: string
+  role: Role
   password: string
   createdAt: Date
 }
