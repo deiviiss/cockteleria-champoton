@@ -53,7 +53,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <>
-      <motion.div className="bg-card dark:border dark:border-primary rounded-lg shadow-md overflow-hidden" variants={cardVariants} whileHover="hover">
+      <motion.div className="bg-card dark:border dark:border-primary rounded-lg shadow-md overflow-hidden h-full flex flex-col" variants={cardVariants} whileHover="hover">
         <div className="relative h-48">
           <Image
             src={product.image || "/images/placeholder.webp"}
@@ -62,24 +62,24 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="object-cover"
           />
         </div>
-        <div className="p-4">
 
+        <div className="p-4 flex-grow">
           <h3 className="text-lg font-semibold mb-1">{product.name}</h3>
 
           {product.description && <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{product.description}</p>}
 
-          <div className="flex justify-between items-center">
-            <Button
-              onClick={handleAddToCart}
-              disabled={isLoading}
-              size="sm"
-              className="bg-primary hover:bg-primary/80"
-            >
-              <ProductOptionButton product={product} />
-            </Button>
+        </div>
+        <div className="flex justify-between items-center p-4 pt-0">
+          <Button
+            onClick={handleAddToCart}
+            disabled={isLoading}
+            size="sm"
+            className="bg-primary hover:bg-primary/80"
+          >
+            <ProductOptionButton product={product} />
+          </Button>
 
-            <p className="text-base font-bold text-primary">{`${product.price ? `$ ${product.price}` : ''}`}</p>
-          </div>
+          <p className="text-base font-bold text-primary">{`${product.price ? `$ ${product.price}` : ''}`}</p>
         </div>
       </motion.div>
 
