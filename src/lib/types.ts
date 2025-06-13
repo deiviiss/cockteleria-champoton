@@ -3,6 +3,7 @@ export interface ProductOption {
   productId: string;
   name: string;
   price: number;
+  type: "size" | "ingredient";
   quantity: number;
   isAvailable: boolean;
 }
@@ -17,6 +18,7 @@ export interface Product {
   isAvailable: boolean
   createdAt: Date
   options?: ProductOption[]
+  groupedOptions?: Record<string, ProductOption[]>
 }
 
 export interface Category {

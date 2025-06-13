@@ -34,7 +34,7 @@ export default function ProductsTab() {
   const [isEditing, setIsEditing] = useState(false)
 
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null)
-  const [newOption, setNewOption] = useState({ name: "", price: 0, available: false })
+  const [newOption, setNewOption] = useState<Partial<ProductOption>>({ name: "", price: 0, isAvailable: false, type: "size" })
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
 
   const [showDeleteOptionsModal, setShowDeleteOptionsModal] = useState(false)
@@ -111,29 +111,30 @@ export default function ProductsTab() {
 
   const handleCancel = () => {
     setCurrentProduct(null)
-    setNewOption({ name: "", price: 0, available: true })
+    setNewOption({ name: "", price: 0, isAvailable: true, type: "size" })
     setIsEditing(false)
     setSelectedImage(null)
   }
 
   // Functions to manage product options
   const addOption = () => {
-    if (!newOption.name.trim()) {
+    if (!newOption.name?.trim() || !newOption.type) {
       toast.error("El nombre es requerido.")
       return
     }
 
     const newOpt: ProductOption = {
-      name: newOption.name.trim(),
-      price: newOption.price,
-      isAvailable: newOption.available,
+      name: newOption.name?.trim() || '',
+      price: newOption.price || 0,
+      isAvailable: newOption.isAvailable || true,
       quantity: 0,
-      productId: currentProduct?.id || ''
+      productId: currentProduct?.id || '',
+      type: newOption.type || 'size'
     }
 
     const current = form.getValues("options") || []
     form.setValue("options", [...current, newOpt])
-    setNewOption({ name: "", price: 0, available: true })
+    setNewOption({ name: "", price: 0, isAvailable: true, type: "size" })
   }
 
   const updateOption = (index: number, field: keyof ProductOption, value: any) => {
@@ -146,7 +147,6 @@ export default function ProductsTab() {
     }
     form.setValue("options", updated)
   }
-
 
   const removeOption = (index: number) => {
     const current = form.getValues("options") || []
@@ -518,9 +518,36 @@ export default function ProductsTab() {
                         }
 
                         {/* Add New Option */}
-                        <div className="border rounded-lg p-4 bg-primary/10">
+                        <div className="border rounded-lg p-4 bg-primary/10 flex flex-col gap-y-2">
                           <h4 className="text-sm font-medium text-foreground mb-3">Agregar nueva opción:</h4>
+
+                          {/* select option type */}
+                          <Select
+                            value={newOption.type}
+                            onValueChange={(value) => setNewOption({ ...newOption, type: value as "size" | "ingredient" })}
+                            disabled={isSubmitting}
+                          >
+                            <SelectTrigger className="w-1/3">
+                              <SelectValue placeholder="Elige una opción..." />
+                            </SelectTrigger>
+                            <SelectContent>
+
+                              <SelectItem value={"size"}>
+                                <div className="flex justify-between items-center w-full">
+                                  <span>Tamaño</span>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value={"ingredient"}>
+                                <div className="flex justify-between items-center w-full">
+                                  <span>Ingredientes</span>
+                                </div>
+                              </SelectItem>
+
+                            </SelectContent>
+                          </Select>
+                          {/* select option data */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            {/* option name */}
                             <div>
                               <Label htmlFor="optionName" className="text-xs">
                                 Nombre
@@ -533,6 +560,7 @@ export default function ProductsTab() {
                                 disabled={isSubmitting}
                               />
                             </div>
+                            {/* option price */}
                             <div>
                               <Label htmlFor="optionPrice" className="text-xs">
                                 Precio
@@ -550,6 +578,7 @@ export default function ProductsTab() {
                                 disabled={isSubmitting}
                               />
                             </div>
+                            {/* add option button */}
                             <div className="flex items-end">
                               <Button
                                 type="button"
@@ -562,10 +591,11 @@ export default function ProductsTab() {
                               </Button>
                             </div>
                           </div>
+                          {/* switch to enable/disable option */}
                           <div className="flex items-center space-x-2 mt-3">
                             <Switch
-                              checked={newOption.available}
-                              onCheckedChange={(checked) => setNewOption({ ...newOption, available: checked })}
+                              checked={newOption.isAvailable}
+                              onCheckedChange={(checked) => setNewOption({ ...newOption, isAvailable: checked })}
                               disabled={isSubmitting}
                             />
                             <Label className="text-sm">Opción disponible</Label>

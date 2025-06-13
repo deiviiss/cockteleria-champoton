@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import Loading from "./loading"
 import { PromotionBanner } from "@/components/promotion-banner"
-import { ProductList } from "@/components/product-list"
+import { ProductList } from "@/components/products/product-list"
 import { SidebarCategories } from "@/components/sidebar-categories"
 import { getProducts } from "@/actions/products/get-products"
 import { getCategories } from "@/actions/categories/get-categories"

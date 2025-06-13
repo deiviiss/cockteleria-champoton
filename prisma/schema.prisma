@@ -33,14 +33,20 @@ model Product {
   createdAt   DateTime        @default(now())
 }
 
+enum ProductOptionType {
+  size
+  ingredient
+}
+
 model ProductOption {
-  id          String  @id @default(uuid())
-  product     Product @relation(fields: [productId], references: [id])
+  id          String            @id @default(uuid())
+  product     Product           @relation(fields: [productId], references: [id])
   productId   String
   name        String // Ej: “Big”, “Strawberry”, etc.
   price       Float // Specific price for this option
-  quantity    Int     @default(0) // Could be ignored
-  isAvailable Boolean @default(true)
+  type        ProductOptionType
+  quantity    Int               @default(0) // Could be ignored
+  isAvailable Boolean           @default(true)
 }
 
 model Promotion {

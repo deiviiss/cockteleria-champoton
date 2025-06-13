@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import type { Product, Category } from "@/lib/types"
-import ProductCard from "./product-card"
+import ProductCard from "@/components/products/product-card"
 
 interface ProductListProps {
   products: Product[]
