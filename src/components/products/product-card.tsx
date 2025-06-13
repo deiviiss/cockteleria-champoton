@@ -62,13 +62,12 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="object-cover"
           />
         </div>
-        <div className="p-4 flex flex-col justify-end">
-          <div className="">
-            <h3 className="text-lg font-semibold mb-1">{product.name}</h3>
+        <div className="p-4">
 
-            {product.description && <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{product.description}</p>}
+          <h3 className="text-lg font-semibold mb-1">{product.name}</h3>
 
-          </div>
+          {product.description && <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{product.description}</p>}
+
           <div className="flex justify-between items-center">
             <Button
               onClick={handleAddToCart}
