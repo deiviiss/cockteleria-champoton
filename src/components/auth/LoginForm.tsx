@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GiShrimp } from "react-icons/gi";
@@ -14,7 +14,7 @@ import { login } from "@/actions/auth/login"
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { IoInformationOutline } from "react-icons/io5"
+import Image from "next/image"
 
 const loginSchema = z.object({
   email: z.string({
@@ -36,7 +36,6 @@ export default function LoginForm() {
 
   const redirectTo = searchParams.get('redirectTo') || '/platform/profile'
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState('')
 
   const defaultValuesForm = {
     email: '',
@@ -48,7 +47,6 @@ export default function LoginForm() {
     resolver: zodResolver(loginSchema)
   })
   const [showPassword, setShowPassword] = useState(false)
-  const router = useRouter()
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsSubmitting(true)
@@ -60,7 +58,6 @@ export default function LoginForm() {
 
       if (!ok) {
         toast.error(message)
-        setError(message)
         setIsSubmitting(false)
         return
       }
@@ -88,12 +85,19 @@ export default function LoginForm() {
         >
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-center mb-2">
-                <GiShrimp className="h-10 w-10 text-primary" />
+              <div className="mx-auto w-24 h-24 mb-4">
+                <Image
+                  src="/images/logo2.webp"
+                  alt="Coctelería Champotón"
+                  width={96}
+                  height={96}
+                  className="object-contain mx-auto"
+                  priority
+                />
               </div>
-              <CardTitle className="text-2xl text-center">Bienvenido de nuevo</CardTitle>
-              <CardDescription className="text-center">
-                Ingresa tu usuario y contraseña para acceder a tu cuenta
+              <CardTitle className="text-2xl text-center font-bold text-gray-800 mb-2">Panel de Administración</CardTitle>
+              <CardDescription className="text-center text-gray-600">
+                Coctelería y Tacos de Mariscos Champotón
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -119,15 +123,23 @@ export default function LoginForm() {
                 control={form.control}
                 name='password'
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="relative">
                     <FormLabel>Contraseña</FormLabel>
                     <FormControl>
                       <Input
-                        type='password'
+                        type={showPassword ? "text" : "password"}
                         placeholder='Contraseña'
                         {...field}
-                        value={field.value} />
+                        value={field.value}
+                      />
                     </FormControl>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2/3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
                     <FormMessage />
                   </FormItem>
                 )}
