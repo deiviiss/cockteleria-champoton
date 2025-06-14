@@ -80,7 +80,7 @@ export async function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/admin" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/auth/login" className="text-gray-300 hover:text-white transition-colors">
                   Administración
                 </Link>
               </li>

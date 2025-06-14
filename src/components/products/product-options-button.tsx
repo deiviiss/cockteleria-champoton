@@ -13,7 +13,6 @@ export function ProductOptionButton({ product }: ProductOptionButtonProps) {
 
     // Assuming the first option's name indicates the type
     const firstOption = product.options[0]
-    console.log('firstOption', firstOption)
 
     if (firstOption.type.toLowerCase().includes('size')) {
       return "Tamaño"

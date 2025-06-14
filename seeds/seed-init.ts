@@ -1384,10 +1384,20 @@ const initialPromotions: Promotion[] = [
 const initialUsers: User[] = [
   {
     id: randomUUID(),
-    name: "Edgar",
-    phoneNumber: "+521234567890",
+    name: "Walter",
+    email: "walter@mail.com",
+    phoneNumber: "+5219811604723",
     role: Role.ADMIN,
-    password: bcrypt.hashSync("admin123!", 10), // Hashed password
+    password: bcrypt.hashSync("9811604723", 10), // Hashed password
+    createdAt: new Date(),
+  },
+  {
+    id: randomUUID(),
+    name: "Champotón",
+    email: "champoton@mail.com",
+    phoneNumber: "+5219813078506",
+    role: Role.ADMIN,
+    password: bcrypt.hashSync("9813078506", 10), // Hashed password
     createdAt: new Date(),
   },
 ];
