@@ -95,8 +95,8 @@ export default function LoginForm() {
                   priority
                 />
               </div>
-              <CardTitle className="text-2xl text-center font-bold text-gray-800 mb-2">Panel de Administración</CardTitle>
-              <CardDescription className="text-center text-gray-600">
+              <CardTitle className="text-2xl text-center font-bold text-primary mb-2">Panel de Administración</CardTitle>
+              <CardDescription className="text-center text-muted-foreground">
                 Coctelería y Tacos de Mariscos Champotón
               </CardDescription>
             </CardHeader>
