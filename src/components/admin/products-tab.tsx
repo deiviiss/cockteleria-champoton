@@ -424,9 +424,13 @@ export default function ProductsTab() {
                         <FormItem>
                           <FormLabel>Precio *</FormLabel>
                           <FormControl>
-                            <Input type='number' placeholder='Precio del producto' {...field}
+                            <Input
+                              type='number'
+                              min={'0'}
+                              step={'0.01'}
+                              {...field}
                               onChange={(e) => { field.onChange(e.target.value === '' ? 0 : parseFloat(e.target.value)) }}
-
+                              placeholder='Precio del producto'
                               disabled={isSubmitting}
                             />
                           </FormControl>
@@ -524,7 +528,7 @@ export default function ProductsTab() {
                           {/* select option type */}
                           <Select
                             value={newOption.type}
-                            onValueChange={(value) => setNewOption({ ...newOption, type: value as "size" | "ingredient" })}
+                            onValueChange={(value) => setNewOption({ ...newOption, type: value as "size" | "ingredient" | "variable" })}
                             disabled={isSubmitting}
                           >
                             <SelectTrigger className="w-1/3">
@@ -542,7 +546,11 @@ export default function ProductsTab() {
                                   <span>Ingredientes</span>
                                 </div>
                               </SelectItem>
-
+                              <SelectItem value={"variable"}>
+                                <div className="flex justify-between items-center w-full">
+                                  <span>Variable</span>
+                                </div>
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                           {/* select option data */}

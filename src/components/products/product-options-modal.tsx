@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, ShoppingCart, Minus, Plus } from "lucide-react"
+import { X, ShoppingCart, Minus, Plus, Info, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Product } from "@/lib/types"
 import { useCartStore } from "@/store"
@@ -10,6 +10,7 @@ import { toast } from "sonner"
 import Image from "next/image"
 import ProductSelector from "./product-selector"
 import { ProductOptionsMultiple } from "./product-options-multiple"
+import { Alert, AlertDescription } from "../ui/alert"
 
 interface ProductOptionsModalProps {
   product: Product
@@ -27,7 +28,7 @@ export default function ProductOptionsModal({ product, isOpen, onClose }: Produc
   const selectedOptions = product.options?.filter((option) => selectedOptionIds.includes(option.id || '')) || []
 
   const handleAddToCart = () => {
-    if (!selectedOption && selectedOptions.length === 0) return
+    if (!selectedOption && selectedOptions.length === 0 && !isVariableOnly) return
 
     const productWithSelectedOption = {
       ...product,
@@ -42,7 +43,7 @@ export default function ProductOptionsModal({ product, isOpen, onClose }: Produc
     }
 
     const quantityText = quantity === 1 ? "" : ` (${quantity} unidades)`
-    toast.success(`${product.name} (${selectedOption?.name})${quantityText} agregado al carrito`)
+    toast.success(`${product.name} ${quantityText} agregado al carrito`)
     onClose()
     setSelectedOptionId("")
     setSelectedOptionIds([])
@@ -63,18 +64,25 @@ export default function ProductOptionsModal({ product, isOpen, onClose }: Produc
     }
   };
 
+  const variablePriceOptions = product.groupedOptions?.variable || []
   const sizeOptions = product.groupedOptions?.size || []
   const ingredientOptions = product.groupedOptions?.ingredient || []
 
   const hasSizeOptions = sizeOptions.length > 0
   const hasIngredientOptions = ingredientOptions.length > 0
+  const hasVariableOptions = variablePriceOptions.length > 0
+
+  const isVariableOnly = hasVariableOptions && !hasSizeOptions && !hasIngredientOptions
 
   const isReadyToAdd =
-    hasSizeOptions
-      ? !!selectedOption
-      : hasIngredientOptions
-        ? selectedOptionIds.length > 0
-        : true
+    isVariableOnly
+      ? true
+      : hasSizeOptions
+        ? !!selectedOption
+        : hasIngredientOptions
+          ? selectedOptionIds.length > 0
+          : true
+
 
   const showQuantitySelector = selectedOption || selectedOptionIds.length > 0
 
@@ -87,7 +95,7 @@ export default function ProductOptionsModal({ product, isOpen, onClose }: Produc
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.1 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
             onClick={handleClose}
           />
@@ -97,13 +105,13 @@ export default function ProductOptionsModal({ product, isOpen, onClose }: Produc
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.1 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             <div className="bg-muted rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-hidden border">
               {/* Header */}
               <div className="flex justify-between items-center p-4 border-b">
-                <h2 className="text-lg font-semibold">Elegir opción</h2>
+                <h2 className="text-lg font-semibold">{hasVariableOptions ? "Precio Variable" : "Elegir opción"}</h2>
                 <button
                   onClick={handleClose}
                   className="p-1 rounded-full hover:bg-muted transition-colors"
@@ -133,6 +141,39 @@ export default function ProductOptionsModal({ product, isOpen, onClose }: Produc
                     </div>
                   </div>
                 </div>
+
+                {/* Options for variable price */}
+                {
+                  product.groupedOptions?.variable &&
+                  <>
+                    <Alert className="mb-6 border-orange-200 bg-orange-50">
+                      <Info className="h-4 w-4 text-orange-600" />
+                      <AlertDescription className="text-orange-800">
+                        <div className="space-y-2">
+                          <p className="font-medium">💰 Precio variable según tamaño</p>
+                          <p className="text-sm">
+                            El precio de este producto varía dependiendo del tamaño y disponibilidad del día.
+                          </p>
+                        </div>
+                      </AlertDescription>
+                    </Alert>
+
+                    {/* How it works */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                      <div className="flex items-start gap-3">
+                        <MessageCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div className="space-y-2">
+                          <h4 className="font-medium text-blue-900">¿Cómo funciona?</h4>
+                          <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                            <li>Agrega el producto a tu carrito</li>
+                            <li>Realiza tu pedido por WhatsApp</li>
+                            <li>Te confirmaremos precio y disponibilidad</li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                }
 
                 {/* Option Selector for ingredients */}
                 <div className="flex flex-col gap-3">
@@ -204,6 +245,13 @@ export default function ProductOptionsModal({ product, isOpen, onClose }: Produc
                   <ShoppingCart className="mr-2 h-4 w-4" />
                   Agregar al carrito {quantity > 1 && `(${quantity})`}
                 </Button>
+
+                {
+                  product.groupedOptions?.variable &&
+                  <p className="text-xs text-center text-muted-foreground mt-3">
+                    El precio final se confirmará por WhatsApp
+                  </p>
+                }
               </div>
             </div>
           </motion.div>

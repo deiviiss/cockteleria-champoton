@@ -30,21 +30,22 @@ const cardVariants = {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCartStore()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const hasOptions = product.options && product.options.length > 0
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleAddToCart = () => {
+
     if (hasOptions) {
       setIsModalOpen(true)
       return
     }
 
-    setIsLoading(true)
+    setIsSubmitting(true)
     // Simulate a small delay for the animation
     setTimeout(() => {
       addToCart(product)
-      setIsLoading(false)
+      setIsSubmitting(false)
       toast.success(`${product.name} agregado al carrito`, {
         position: "bottom-right",
       })
@@ -72,7 +73,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex justify-between items-center p-4 pt-0">
           <Button
             onClick={handleAddToCart}
-            disabled={isLoading}
+            disabled={isSubmitting}
             size="sm"
             className="bg-primary hover:bg-primary/80"
           >
@@ -84,6 +85,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </motion.div>
 
       <ProductOptionsModal product={product} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
     </>
   )
 }

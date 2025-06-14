@@ -30,7 +30,7 @@ export const ProductOptionsMultiple = ({
     <div className="space-y-4">
       <div>
         <h4 className="font-medium mb-3">Selecciona los ingredientes que desees:</h4>
-        <div className="space-y-0">
+        <div className="space-y-1">
           {options?.map((option) => (
             <motion.div
               key={option.id}

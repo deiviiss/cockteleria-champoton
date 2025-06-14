@@ -171,7 +171,7 @@ export function SidebarCart() {
                     {/* Price and remove button */}
                     <div className="flex flex-col items-end">
                       <span className="font-medium text-sm">
-                        ${((item.product.price) * item.quantity).toFixed(2)}
+                        {item.product.price > 0 ? `$ ${((item.product.price) * item.quantity).toFixed(2)}` : "Pendiente"}
                       </span>
                       <button
                         onClick={() => handleRemoveItem(item.product.id, item.product.name)}
@@ -199,6 +199,10 @@ export function SidebarCart() {
                   <span>Total</span>
                   <span>${getSubtotal().toFixed(2)}</span>
                 </div>
+
+                <p className="text-xs text-muted-foreground mb-2">
+                  *No incluye envío
+                </p>
               </div>
 
               {/* Action buttons */}
