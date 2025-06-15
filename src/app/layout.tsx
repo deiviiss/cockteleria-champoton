@@ -1,8 +1,5 @@
 import type { Metadata } from "next"
 import { Quicksand } from "next/font/google"
-import { Navbar } from "@/components/navbar"
-import { SidebarCart } from "@/components/sidebar-cart"
-import { Footer } from "@/components/footer"
 import { Toaster } from "sonner"
 import { Providers } from "@/components/providers/Providers"
 import "./globals.css"
@@ -47,13 +44,10 @@ export default function RootLayout({
     <html lang="es" className="scroll-smooth">
       <body className={inter.className}>
         <Providers>
-          <Navbar />
-          <SidebarCart />
           {children}
           <ToogleDarkMode />
           <ScrollToTop />
           <Toaster position="bottom-right" richColors />
-          <Footer />
         </Providers>
       </body>
     </html>
