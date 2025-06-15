@@ -36,6 +36,7 @@ model Product {
 enum ProductOptionType {
   size
   ingredient
+  variable
 }
 
 model ProductOption {

@@ -5,7 +5,7 @@ export const optionSchema = z.object({
   name: z.string().min(1).max(100),
   price: z.coerce.number().nonnegative(),
   isAvailable: z.boolean().default(true),
-  type: z.enum(["size", "ingredient"]),
+  type: z.enum(["size", "ingredient", "variable"]).optional(),
   quantity: z.number().int().nonnegative().optional().default(0),
 })
 
@@ -38,9 +38,6 @@ export const productSchema = z.object({
   price: z
     .number({
       message: 'El precio es requerido.'
-    })
-    .positive({
-      message: 'El precio debe ser mayor a 0.'
     })
     .transform(val => Number(val.toFixed(2))),
   image: z
