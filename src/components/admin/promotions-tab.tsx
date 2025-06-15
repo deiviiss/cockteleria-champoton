@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type { Category, Promotion } from "@/lib/types"
-import { PlusCircle, Pencil, Trash2, Save, X, Calendar } from "lucide-react"
+import { PlusCircle, Pencil, Trash2, Save, X } from "lucide-react"
 import { getPromotions } from "@/actions/promotions/get-promotions"
 import Loading from "@/app/loading"
 import { promotionSchema } from "@/schemas/promotion.schema"
@@ -17,10 +17,13 @@ import { toast } from "sonner"
 import { createUpdatePromotion } from "@/actions/promotions/createUpdatePromotion"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import ImageUpload from "@/components/image-upload"
-import { Switch } from "../ui/switch"
+import { Switch } from "@/components/ui/switch"
 import { getCategoryPromotion } from "@/actions/categories/get-category-promotion"
 import { deleteImageFromCloudinary } from "@/actions/products/delete-image-from-cloudinary"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import Image from "next/image"
+import { Badge } from "@/components/ui/badge"
 
 export default function PromotionsTab() {
   const [promotions, setPromotions] = useState<Promotion[]>([])
@@ -116,6 +119,7 @@ export default function PromotionsTab() {
 
   const handleDelete = async (id: string) => {
     if (!id) return
+    setIsSubmitting(true)
 
     try {
       const { ok, message } = await deletePromotion(id)
@@ -129,11 +133,12 @@ export default function PromotionsTab() {
 
       const updated = await getPromotions()
       setPromotions(updated)
+      setIsSubmitting(false)
       setPromotionToDelete(null)
       setShowDeleteModal(false)
     } catch (error) {
       console.error("Error al eliminar la promoción:", error)
-      alert("Ocurrió un error al eliminar la promoción")
+      toast.error("Ocurrió un error al eliminar la promoción")
     }
   }
 
@@ -244,64 +249,64 @@ export default function PromotionsTab() {
             {promotions.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">No hay promociones. ¡Agrega una nueva!</div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="bg-primary/20">
-                      <th className="text-left p-3">Nombre</th>
-                      <th className="text-left p-3">Descuento</th>
-                      <th className="text-left p-3">Precios</th>
-                      <th className="text-left p-3">Estado</th>
-                      <th className="text-right p-3">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {promotions.map((promotion) => {
-                      const isActive = promotion.isActive
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {promotions.map((promotion) => {
+                  const isActive = promotion.isActive
 
-                      return (
-                        <tr key={promotion.id} className="border-b hover:bg-primary/10">
-                          <td className="p-3">{promotion.name}</td>
-                          <td className="p-3">{promotion.discountPercentage}%</td>
-                          <td className="p-3">
-                            <div className="text-sm">
-                              <div>Original: ${promotion.originalPrice.toFixed(2)}</div>
-                              <div>Promoción: ${promotion.promoPrice.toFixed(2)}</div>
-                            </div>
-                          </td>
-                          <td className="p-3">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs ${isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
-                            >
-                              {isActive ? "Activa" : "Inactiva"}
-                            </span>
-                          </td>
-                          <td className="p-3 text-right">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEdit(promotion)}
-                              className="text-blue-500 hover:text-blue-700 mr-1"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setPromotionToDelete(promotion);
-                                setShowDeleteModal(true);
-                              }}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
+                  return (
+                    <Card key={promotion.id} className="overflow-hidden">
+                      <div className="relative h-48">
+                        <Image
+                          src={promotion.image || "/placeholder.svg?height=200&width=300"}
+                          alt={promotion.name}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute top-2 right-2 flex gap-1">
+                          <Badge variant={isActive ? "default" : "secondary"} className="text-xs">
+                            {isActive ? "Activa" : "Inactiva"}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs bg-white/90">
+                            {promotion.discountPercentage}% OFF
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg line-clamp-1">{promotion.name}</CardTitle>
+                      </CardHeader>
+
+                      <CardContent className="pt-0">
+                        {promotion.description && (
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{promotion.description}</p>
+                        )}
+
+                        <div className="text-sm text-gray-600 mb-4">
+                          <div>Original: ${promotion.originalPrice.toFixed(2)}</div>
+                          <div>Promoción: ${promotion.promoPrice.toFixed(2)}</div>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" onClick={() => handleEdit(promotion)} className="flex-1">
+                            <Pencil className="h-4 w-4 mr-1" />
+                            Editar
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setPromotionToDelete(promotion);
+                              setShowDeleteModal(true);
+                            }}
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
               </div>
             )}
           </>
@@ -513,6 +518,7 @@ export default function PromotionsTab() {
             </Button>
             <Button
               variant="destructive"
+              disabled={isSubmitting}
               onClick={() => handleDelete(promotionToDelete?.id || "")}
             >
               Eliminar

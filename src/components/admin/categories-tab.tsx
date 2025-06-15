@@ -8,7 +8,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { Category } from "@/lib/types"
-import { PlusCircle, Pencil, Trash2, Save, X } from "lucide-react"
+import { PlusCircle, Pencil, Trash2, Save, X, FolderOpen } from "lucide-react"
 import { getCategories } from "@/actions/categories/get-categories"
 import Loading from "@/app/loading"
 import { createUpdateCategory } from "@/actions/categories/createUpdateCategory"
@@ -16,6 +16,7 @@ import { toast } from "sonner"
 import { deleteCategory } from "@/actions/categories/delete-category-by-id"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { categorySchema } from "@/schemas/category.schema"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function CategoriesTab() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -75,20 +76,26 @@ export default function CategoriesTab() {
 
   const handleDelete = async (id: string) => {
     if (!categoryToDelete) return
+    setIsSubmitting(true)
 
-    const { ok, message } = await deleteCategory(id)
+    try {
+      const { ok, message } = await deleteCategory(id)
 
-    if (!ok) {
-      toast.error(message || "No se pudo eliminar la categoría")
-      return
+      if (!ok) {
+        toast.error(message || "No se pudo eliminar la categoría")
+        return
+      }
+
+      toast.success(message || "Categoría eliminada correctamente")
+      const updated = await getCategories()
+      setCategories(updated)
+      setIsSubmitting(false)
+      setShowDeleteModal(false)
+      setCategoryToDelete(null)
+    } catch (error) {
+      console.error("Error al eliminar la categoría:", error)
+      toast.error("Ocurrió un error al eliminar la categoría")
     }
-
-    toast.success(message || "Categoría eliminada correctamente")
-    const updated = await getCategories()
-    setCategories(updated)
-
-    setShowDeleteModal(false)
-    setCategoryToDelete(null)
   }
 
   const onSubmit = async (values: z.infer<typeof categorySchema>) => {
@@ -141,43 +148,36 @@ export default function CategoriesTab() {
           {categories.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">No hay categorías. ¡Agrega una nueva!</div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-primary/20">
-                    <th className="text-left p-3">Nombre</th>
-                    <th className="text-right p-3">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {categories.map((category) => (
-                    <tr key={category.id} className="border-b hover:bg-primary/10">
-                      <td className="p-3">{category.name}</td>
-                      <td className="p-3 text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(category)}
-                          className="text-blue-500 hover:text-blue-700 mr-1"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setCategoryToDelete(category)
-                            setShowDeleteModal(true)
-                          }}
-                          className="text-destructive hover:text-destructive/80"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categories.map((category) => (
+                <Card key={category.id} className="hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <FolderOpen className="h-5 w-5 text-orange-500" />
+                      {category.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={() => handleEdit(category)} className="flex-1">
+                        <Pencil className="h-4 w-4 mr-1" />
+                        Editar
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setCategoryToDelete(category)
+                          setShowDeleteModal(true)
+                        }}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           )}
         </>
@@ -246,12 +246,14 @@ export default function CategoriesTab() {
           <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-end">
             <Button
               variant="outline"
+              disabled={isSubmitting}
               onClick={() => setShowDeleteModal(false)}
             >
               Cancelar
             </Button>
             <Button
               variant="destructive"
+              disabled={isSubmitting}
               onClick={() => handleDelete(categoryToDelete?.id || "")}
             >
               Eliminar
