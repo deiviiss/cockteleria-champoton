@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import type { Product, Category, ProductOption } from "@/lib/types"
-import { PlusCircle, Pencil, Trash2, Save, X, Trash, Plus } from "lucide-react"
+import { PlusCircle, Pencil, Trash2, Save, X, Trash, Plus, DollarSign, Tag } from "lucide-react"
 import ImageUpload from "@/components/image-upload"
 import { getProducts } from "@/actions/products/get-products"
 import { getCategories } from "@/actions/categories/get-categories"
@@ -24,6 +24,10 @@ import { deleteProduct } from "@/actions/products/delete-product-by-id"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { deleteImageFromCloudinary } from "@/actions/products/delete-image-from-cloudinary"
 import { DialogDescription } from "@radix-ui/react-dialog"
+import Image from "next/image"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { BsCash } from "react-icons/bs";
 
 export default function ProductsTab() {
   const [products, setProducts] = useState<Product[]>([])
@@ -135,6 +139,7 @@ export default function ProductsTab() {
     const current = form.getValues("options") || []
     form.setValue("options", [...current, newOpt])
     setNewOption({ name: "", price: 0, isAvailable: true, type: "size" })
+    toast.success("Opción agregada correctamente")
   }
 
   const updateOption = (index: number, field: keyof ProductOption, value: any) => {
@@ -157,19 +162,27 @@ export default function ProductsTab() {
 
   const handleDelete = async (productId: string) => {
     if (!productToDelete) return
+    setIsSubmitting(true)
 
-    const { ok, message } = await deleteProduct(productId)
-    if (!ok) {
-      toast.error(message || "No se pudo eliminar el producto")
-      return
+    try {
+      const { ok, message } = await deleteProduct(productId)
+
+      if (!ok) {
+        toast.error(message || "No se pudo eliminar el producto")
+        return
+      }
+
+      toast.success(message || "Producto eliminado correctamente")
+
+      const updated = await getProducts()
+      setProducts(updated)
+      setIsSubmitting(false)
+      setShowDeleteModal(false)
+      setProductToDelete(null)
+    } catch (error) {
+      console.error("Error al eliminar el producto:", error)
+      toast.error("Ocurrió un error al eliminar el producto")
     }
-
-    toast.success(message || "Producto eliminado correctamente")
-
-    const updated = await getProducts()
-    setProducts(updated)
-    setShowDeleteModal(false)
-    setProductToDelete(null)
   }
 
   const onSubmit = async (values: z.infer<typeof productSchema>) => {
@@ -281,58 +294,77 @@ export default function ProductsTab() {
               )
               :
               (
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-primary/20">
-                        <th className="text-left p-3">Nombre</th>
-                        <th className="text-left p-3">Categoría</th>
-                        <th className="text-left p-3">Precio</th>
-                        <th className="text-left p-3">Estado</th>
-                        <th className="text-right p-3">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {products.map((product) => {
-                        const category = categories.find((c) => c.id === product.categoryId)
-                        return (
-                          <tr key={product.id} className="border-b hover:bg-primary/10">
-                            <td className="p-3">{product.name}</td>
-                            <td className="p-3">{category?.name || "Sin categoría"}</td>
-                            <td className="p-3">{product.options?.length ? 'Variados' : `$ ${product.price}`} </td>
-                            <td className="p-3">
-                              <span
-                                className={`px-2 py-1 rounded-full text-xs ${product.isAvailable ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
-                              >
-                                {product.isAvailable ? "Activo" : "Inactivo"}
-                              </span>
-                            </td>
-                            <td className="p-3 text-right">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEdit(product)}
-                                className="text-blue-500 hover:text-blue-700 mr-1"
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  setProductToDelete(product)
-                                  setShowDeleteModal(true)
-                                }}
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {products.map((product) => {
+                    const category = categories.find((c) => c.id === product.categoryId)
+                    const hasOptions = product.options && product.options.length > 0
+
+                    return (
+                      <Card key={product.id} className="overflow-hidden">
+                        <div className="relative h-48">
+                          <Image
+                            src={product.image || "/placeholder.svg?height=200&width=300"}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                          />
+                          <div className="absolute top-2 right-2 flex gap-1">
+                            <Badge variant={product.isAvailable ? "default" : "secondary"} className="text-xs">
+                              {product.isAvailable ? "Activo" : "Inactivo"}
+                            </Badge>
+                            {hasOptions && (
+                              <Badge variant="secondary" className="text-xs">
+                                {product.options?.length} opciones
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+
+                        <CardHeader className="pb-3">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <CardTitle className="text-lg line-clamp-1">{product.name}</CardTitle>
+                              <div className="flex items-center gap-2 mt-1">
+                                <Tag className="h-3 w-3 text-gray-500" />
+                                <span className="text-sm text-gray-600">{category?.name || "Sin categoría"}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardHeader>
+
+                        <CardContent className="pt-0">
+                          {product.description && (
+                            <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
+                          )}
+
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                              <BsCash className="h-4 w-4 text-green-600" />
+                              <span className="text-lg font-bold">{product.price > 0 ? product.price.toFixed(2) : 'Precio en opciones'}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm" onClick={() => handleEdit(product)} className="flex-1">
+                              <Pencil className="h-4 w-4 mr-1" />
+                              Editar
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setProductToDelete(product)
+                                setShowDeleteModal(true)
+                              }}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )
+                  })}
                 </div>
               )}
           </>
@@ -664,12 +696,14 @@ export default function ProductsTab() {
           <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-end">
             <Button
               variant="outline"
+              disabled={isSubmitting}
               onClick={() => setShowDeleteModal(false)}
             >
               Cancelar
             </Button>
             <Button
               variant="destructive"
+              disabled={isSubmitting}
               onClick={() => handleDelete(productToDelete?.id || "")}
             >
               Eliminar

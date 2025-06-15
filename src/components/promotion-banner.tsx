@@ -57,7 +57,7 @@ export function PromotionBanner({ promotions }: PromotionBannerProps) {
         // Calculate total price and discounted price
         const { originalPrice, promoPrice } = promotion
         const discountAmount = originalPrice - promoPrice
-        const discountPercentage = ((discountAmount / originalPrice) * 100).toFixed(0)
+        const discountPercentage = promotion.discountPercentage
 
         return (
           <motion.div
