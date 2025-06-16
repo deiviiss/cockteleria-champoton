@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { promotionSchema } from '@/schemas/promotion.schema'
 
 export const createUpdatePromotion = async (formData: FormData) => {

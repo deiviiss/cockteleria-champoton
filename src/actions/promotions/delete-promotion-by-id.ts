@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { deleteImageFromCloudinary } from '../products/delete-image-from-cloudinary'
 import { getPromotionById } from '@/actions/promotions/get-promotion-by-id'
 

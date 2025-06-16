@@ -11,6 +11,7 @@ import Image from "next/image"
 import ProductSelector from "./product-selector"
 import { ProductOptionsMultiple } from "./product-options-multiple"
 import { Alert, AlertDescription } from "../ui/alert"
+import { generateCartItemId } from "@/lib/utils"
 
 interface ProductOptionsModalProps {
   product: Product
@@ -30,11 +31,14 @@ export default function ProductOptionsModal({ product, isOpen, onClose }: Produc
   const handleAddToCart = () => {
     if (!selectedOption && selectedOptions.length === 0 && !isVariableOnly) return
 
+    const options = [
+      ...(selectedOption ? [selectedOption] : []),
+      ...(selectedOptions || [])
+    ]
+
     const productWithSelectedOption = {
       ...product,
-      options: selectedOption
-        ? [selectedOption]
-        : selectedOptions,
+      options,
     }
 
     // Add the specified quantity to the cart
