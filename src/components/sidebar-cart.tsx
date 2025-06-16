@@ -89,7 +89,7 @@ export function SidebarCart() {
       const unitTotal = getProductTotal(item.product) // ya incluye opciones
       const lineTotal = unitTotal * quantity
 
-      message += `*${quantity}x* ${productName} - $${lineTotal.toFixed(2)}\n`
+      message += `*${quantity}x* ${productName} - ${lineTotal === 0 ? 'Pendiente' : `$${lineTotal.toFixed(2)}`}\n`
 
       // Solo mostrar opciones si existen
       if (item.product.options && item.product.options.length > 0) {
