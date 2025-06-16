@@ -32,6 +32,7 @@ import { BsCash } from "react-icons/bs";
 export default function ProductsTab() {
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
 
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -280,12 +281,20 @@ export default function ProductsTab() {
           <>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Lista de Productos</h2>
-              <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/80">
-                <PlusCircle className="h-4 w-4" />
-                <span className="hidden md:inline ml-2">
-                  Nuevo Producto
-                </span>
-              </Button>
+              <div className="flex gap-2 w-full md:w-auto">
+                <Input
+                  placeholder="Buscar producto..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full md:w-64"
+                />
+                <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/80">
+                  <PlusCircle className="h-4 w-4" />
+                  <span className="hidden md:inline ml-2">
+                    Nuevo Producto
+                  </span>
+                </Button>
+              </div>
             </div>
 
             {products.length === 0
@@ -294,78 +303,88 @@ export default function ProductsTab() {
               )
               :
               (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {products.map((product) => {
-                    const category = categories.find((c) => c.id === product.categoryId)
-                    const hasOptions = product.options && product.options.length > 0
+                <>
+                  {
+                    products.filter((product) => product.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">No hay productos que coincidan con tu búsqueda.</div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {
+                          products.filter((product) => product.name.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())).map((product) => {
+                            const category = categories.find((c) => c.id === product.categoryId)
+                            const hasOptions = product.options && product.options.length > 0
 
-                    return (
-                      <Card key={product.id} className="overflow-hidden">
-                        <div className="relative h-48">
-                          <Image
-                            src={product.image || "/placeholder.svg?height=200&width=300"}
-                            alt={product.name}
-                            fill
-                            className="object-cover"
-                          />
-                          <div className="absolute top-2 right-2 flex gap-1">
-                            <Badge variant={product.isAvailable ? "default" : "secondary"} className="text-xs">
-                              {product.isAvailable ? "Activo" : "Inactivo"}
-                            </Badge>
-                            {hasOptions && (
-                              <Badge variant="secondary" className="text-xs">
-                                {product.options?.length} opciones
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
+                            return (
+                              <Card key={product.id} className="overflow-hidden">
+                                <div className="relative h-48">
+                                  <Image
+                                    src={product.image || "/placeholder.svg?height=200&width=300"}
+                                    alt={product.name}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                  <div className="absolute top-2 right-2 flex gap-1">
+                                    <Badge variant={product.isAvailable ? "default" : "secondary"} className="text-xs">
+                                      {product.isAvailable ? "Activo" : "Inactivo"}
+                                    </Badge>
+                                    {hasOptions && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        {product.options?.length} opciones
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
 
-                        <CardHeader className="pb-3">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <CardTitle className="text-lg line-clamp-1">{product.name}</CardTitle>
-                              <div className="flex items-center gap-2 mt-1">
-                                <Tag className="h-3 w-3 text-gray-500" />
-                                <span className="text-sm text-gray-600">{category?.name || "Sin categoría"}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardHeader>
+                                <CardHeader className="pb-3">
+                                  <div className="flex justify-between items-start">
+                                    <div className="flex-1">
+                                      <CardTitle className="text-lg line-clamp-1">{product.name}</CardTitle>
+                                      <div className="flex items-center gap-2 mt-1">
+                                        <Tag className="h-3 w-3 text-gray-500" />
+                                        <span className="text-sm text-gray-600">{category?.name || "Sin categoría"}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </CardHeader>
 
-                        <CardContent className="pt-0">
-                          {product.description && (
-                            <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
-                          )}
+                                <CardContent className="pt-0">
+                                  {product.description && (
+                                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
+                                  )}
 
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                              <BsCash className="h-4 w-4 text-green-600" />
-                              <span className="text-lg font-bold">{product.price > 0 ? product.price.toFixed(2) : 'Precio en opciones'}</span>
-                            </div>
-                          </div>
+                                  <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                      <BsCash className="h-4 w-4 text-green-600" />
+                                      <span className="text-lg font-bold">{product.price > 0 ? product.price.toFixed(2) : 'Precio en opciones'}</span>
+                                    </div>
+                                  </div>
 
-                          <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handleEdit(product)} className="flex-1">
-                              <Pencil className="h-4 w-4 mr-1" />
-                              Editar
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setProductToDelete(product)
-                                setShowDeleteModal(true)
-                              }}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
+                                  <div className="flex gap-2">
+                                    <Button variant="outline" size="sm" onClick={() => handleEdit(product)} className="flex-1">
+                                      <Pencil className="h-4 w-4 mr-1" />
+                                      Editar
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        setProductToDelete(product)
+                                        setShowDeleteModal(true)
+                                      }}
+                                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            )
+                          })
+                        }
+                      </div>
                     )
-                  })}
-                </div>
+                  }
+                </>
               )}
           </>
         )
