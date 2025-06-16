@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Category } from "@/lib/types"
 
 export async function getCategories(): Promise<Category[]> {

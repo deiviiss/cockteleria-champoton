@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from "@/lib/prisma"
+import { prisma } from "@/lib/prisma"
 import { Promotion } from "@/lib/types"
 
 export async function getPromotions(): Promise<Promotion[]> {

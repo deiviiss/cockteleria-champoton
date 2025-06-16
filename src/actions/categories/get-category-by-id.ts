@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 
 export const getCategoryById = async (id: string) => {
   if (!id) return { ok: false, message: 'ID requerido' }
