@@ -4,8 +4,10 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { GiShrimp } from "react-icons/gi";
-import { ButtonLogout } from "../auth/ButtonLogout";
+import { ButtonLogout } from "@/components/auth/ButtonLogout";
 import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { LucideFolderDown } from "lucide-react";
 
 export function NavbarAdmin() {
   const { data: session } = useSession()
@@ -35,8 +37,18 @@ export function NavbarAdmin() {
 
           {/* Navigation buttons */}
           <div className="flex items-center space-x-3">
-            <GiShrimp className="h-5 w-5 text-primary" />
-            <span className="">Hola {session?.user.name}</span>
+            <>
+              <GiShrimp className="h-5 w-5 text-primary" />
+              <span className="">Hola {session?.user.name}</span>
+            </>
+
+            <Button variant="ghost" size="sm" asChild >
+              <Link href="/admin/resources">
+                <LucideFolderDown className="h-5 w-5" />
+                <span className="hidden sm:inline">Recursos</span>
+              </Link>
+            </Button>
+
             <ButtonLogout name="Salir" />
           </div>
         </div>

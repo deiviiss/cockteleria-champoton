@@ -36,48 +36,6 @@ export function SidebarCart() {
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [closeSideCart, showDeliveryModal, showSafariModal])
-  console.log('cart', cart)
-  // const generateAndSendWhatsApp = async (option: "table" | "delivery") => {
-  //   const phoneNumber = await getPhoneNumberMenu()
-  //   let message = "🛒 *Nuevo Pedido*\n\n"
-
-  //   cart.forEach((item) => {
-  //     const productTotal = getProductTotal(item.product)
-  //     const lineTotal = productTotal * item.quantity
-
-  //     message += `*${item.quantity}x* ${item.product.name} - $${lineTotal.toFixed(2)}\n`
-
-  //     // Break down the options with their individual cost
-  //     if (item.product.options && item.product.options.length > 0) {
-  //       item.product.options.forEach((opt) => {
-  //         const optionTotal = (opt.price || 0) * (opt.quantity || 1)
-  //         message += `   - ${opt.name} (${opt.quantity}x) - $${optionTotal.toFixed(2)}\n`
-  //       })
-  //     }
-
-  //     // If the product has options, add them to the message
-  //     if (item.product.options && item.product.options.length > 0) {
-  //       item.product.options.forEach((opt) => {
-  //         message += `   - ${opt.name} (${opt.quantity}x)\n`
-  //       })
-  //     }
-
-  //   })
-
-  //   message += `\n*Total:* $${getSubtotal().toFixed(2)}\n`
-  //   message += `*Tipo de pedido:* ${option === "table" ? `Mesa ${tableNumber}` : "Domicilio"}\n\n`
-  //   message += "¡Gracias por tu pedido! Por favor, presiona el botón de enviar mensaje para continuar."
-
-  //   const encodedMessage = encodeURIComponent(message)
-
-  //   if (!isSafari) {
-  //     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, "_blank")
-  //     closeSideCart()
-  //   } else {
-  //     setShowSafariModal(true)
-  //     setPendingMessage(`https://wa.me/${phoneNumber}?text=${encodedMessage}`)
-  //   }
-  // }
 
   const generateAndSendWhatsApp = async (option: "table" | "delivery") => {
     const phoneNumber = await getPhoneNumberMenu()
@@ -121,7 +79,6 @@ export function SidebarCart() {
       setPendingMessage(`https://wa.me/${phoneNumber}?text=${encodedMessage}`)
     }
   }
-
 
   const handleWhatsAppCheckout = () => {
     setShowDeliveryModal(true)
