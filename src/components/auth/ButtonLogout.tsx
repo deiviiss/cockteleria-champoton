@@ -14,6 +14,7 @@ export const ButtonLogout = ({ className, icon, name }: Props) => {
   return (
     <Button
       variant={'ghost'}
+      size={'sm'}
       onClick={async () => {
         await logout()
         window.location.replace('/')
